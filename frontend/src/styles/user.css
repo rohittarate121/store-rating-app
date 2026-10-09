@@ -1,0 +1,81 @@
+/* User Dashboard Styles */
+
+.stores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.store-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.store-card h4 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.store-card p {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+
+.store-rating-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  padding: 0.8rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.store-rating-info span {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.store-rating-info strong {
+  color: #2c3e50;
+}
+
+.rating-selector {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0.8rem 0;
+}
+
+.rating-star {
+  width: 36px;
+  height: 36px;
+  border: 2px solid #f39c12;
+  background-color: #fff;
+  color: #f39c12;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.rating-star.selected {
+  background-color: #f39c12;
+  color: #fff;
+}
+
+.rating-star:hover {
+  background-color: #f39c12;
+  color: #fff;
+}
+
+.no-stores {
+  text-align: center;
+  padding: 3rem;
+  color: #888;
+  font-size: 1rem;
+}
