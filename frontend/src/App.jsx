@@ -16,8 +16,6 @@ function PrivateRoute({ children, role }) {
 }
 
 export default function App() {
-  const { user } = useAuth();
-
   return (
     <Routes>
       <Route path="/login" element={<Login />} />

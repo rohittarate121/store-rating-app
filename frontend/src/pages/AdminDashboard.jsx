@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
@@ -58,67 +58,67 @@ export default function AdminDashboard() {
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
 
-  useEffect(() => {
-    fetchStats();
-    fetchOwners();
-  }, []);
-
-  useEffect(() => {
-    if (activeTab === "users") fetchUsers();
-  }, [userFilters, userSort, activeTab]);
-
-  useEffect(() => {
-    if (activeTab === "stores") fetchStores();
-  }, [storeFilters, storeSort, activeTab]);
-
-  async function fetchStats() {
+  const fetchStats = useCallback(async () => {
     try {
       const res = await api.get("/admin/stats");
       setStats(res.data);
-    } catch (err) {
+    } catch {
       console.error("Failed to fetch stats");
     }
-  }
+  }, []);
 
-  async function fetchOwners() {
+  const fetchOwners = useCallback(async () => {
     try {
       const res = await api.get("/admin/users", { params: { role: "owner" } });
       setOwners(res.data);
-    } catch (err) {
+    } catch {
       console.error("Failed to fetch owners");
     }
-  }
+  }, []);
 
-  async function fetchUsers() {
+  const fetchUsers = useCallback(async () => {
     try {
       const res = await api.get("/admin/users", {
         params: { ...userFilters, ...userSort },
       });
       setUsers(res.data);
-    } catch (err) {
+    } catch {
       console.error("Failed to fetch users");
     }
-  }
+  }, [userFilters, userSort]);
 
-  async function fetchStores() {
+  const fetchStores = useCallback(async () => {
     try {
       const res = await api.get("/admin/stores", {
         params: { ...storeFilters, ...storeSort },
       });
       setStores(res.data);
-    } catch (err) {
+    } catch {
       console.error("Failed to fetch stores");
     }
-  }
+  }, [storeFilters, storeSort]);
 
   async function fetchUserDetail(id) {
     try {
       const res = await api.get(`/admin/users/${id}`);
       setSelectedUser(res.data);
-    } catch (err) {
+    } catch {
       console.error("Failed to fetch user detail");
     }
   }
+
+  useEffect(() => {
+    fetchStats();
+    fetchOwners();
+  }, [fetchStats, fetchOwners]);
+
+  useEffect(() => {
+    if (activeTab === "users") fetchUsers();
+  }, [userFilters, userSort, activeTab, fetchUsers]);
+
+  useEffect(() => {
+    if (activeTab === "stores") fetchStores();
+  }, [storeFilters, storeSort, activeTab, fetchStores]);
 
   function handleUserSort(field) {
     setUserSort((prev) => ({

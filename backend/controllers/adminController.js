@@ -16,7 +16,10 @@ async function getStats(req, res) {
 
     res.json({ totalUsers, totalStores, totalRatings });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("getStats error:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   }
 }
 
@@ -50,7 +53,10 @@ async function getUsers(req, res) {
 
     res.json(users);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("getUsers error:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   }
 }
 
@@ -65,34 +71,27 @@ async function getUserDetail(req, res) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // If the user is a store owner, find their store and average rating
     let storeRating = null;
     if (user.role === "owner") {
       const store = await Store.findOne({
         where: { ownerId: user.id },
-        include: [
-          {
-            model: Rating,
-            attributes: ["rating"],
-          },
-        ],
+        include: [{ model: Rating, attributes: ["rating"] }],
       });
 
-      if (store) {
-        const ratings = store.Ratings;
-        if (ratings.length > 0) {
-          const avg =
-            ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
-          storeRating = parseFloat(avg.toFixed(2));
-        } else {
-          storeRating = null;
-        }
+      if (store && store.Ratings.length > 0) {
+        const avg =
+          store.Ratings.reduce((sum, r) => sum + r.rating, 0) /
+          store.Ratings.length;
+        storeRating = parseFloat(avg.toFixed(2));
       }
     }
 
     res.json({ ...user.toJSON(), storeRating });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("getUserDetail error:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   }
 }
 
@@ -151,7 +150,10 @@ async function createUser(req, res) {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("createUser error:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   }
 }
 
@@ -179,7 +181,6 @@ async function getStores(req, res) {
       order: [[sortField, sortOrder]],
     });
 
-    // Calculate average rating for each store
     const result = stores.map((store) => {
       const ratings = store.Ratings;
       const avg =
@@ -203,7 +204,10 @@ async function getStores(req, res) {
 
     res.json(result);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("getStores error:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   }
 }
 
@@ -233,7 +237,6 @@ async function createStore(req, res) {
         .json({ message: "Store email already registered" });
     }
 
-    // Validate that ownerId belongs to a user with owner role
     if (ownerId) {
       const owner = await User.findByPk(ownerId);
       if (!owner) {
@@ -243,6 +246,13 @@ async function createStore(req, res) {
         return res
           .status(400)
           .json({ message: "Selected user is not a store owner" });
+      }
+      // One store per owner
+      const existingOwnerStore = await Store.findOne({ where: { ownerId } });
+      if (existingOwnerStore) {
+        return res
+          .status(400)
+          .json({ message: "This owner is already assigned to another store" });
       }
     }
 
@@ -255,7 +265,10 @@ async function createStore(req, res) {
 
     res.status(201).json({ message: "Store created successfully", store });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("createStore error:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   }
 }
 

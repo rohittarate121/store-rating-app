@@ -6,7 +6,6 @@ const {
   validatePassword,
   validateEmail,
 } = require("../utils/validate");
-
 require("dotenv").config();
 
 // POST /api/auth/register
@@ -19,18 +18,15 @@ async function register(req, res) {
         .status(400)
         .json({ message: "Name must be between 20 and 60 characters" });
     }
-
     if (!validateEmail(email)) {
       return res.status(400).json({ message: "Invalid email format" });
     }
-
     if (!validatePassword(password)) {
       return res.status(400).json({
         message:
           "Password must be 8-16 characters with at least one uppercase letter and one special character",
       });
     }
-
     if (address && address.length > 400) {
       return res
         .status(400)
@@ -38,7 +34,6 @@ async function register(req, res) {
     }
 
     const existingUser = await User.findOne({ where: { email } });
-
     if (existingUser) {
       return res.status(400).json({ message: "Email already registered" });
     }
@@ -55,7 +50,10 @@ async function register(req, res) {
 
     res.status(201).json({ message: "Account created successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("register error:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   }
 }
 
@@ -71,13 +69,11 @@ async function login(req, res) {
     }
 
     const user = await User.findOne({ where: { email } });
-
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-
     if (!passwordMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
@@ -98,7 +94,10 @@ async function login(req, res) {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("login error:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   }
 }
 
@@ -116,23 +115,20 @@ async function changePassword(req, res) {
 
     const user = await User.findByPk(req.user.id);
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
     const passwordMatch = await bcrypt.compare(currentPassword, user.password);
-
     if (!passwordMatch) {
       return res.status(400).json({ message: "Current password is incorrect" });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-
     await user.update({ password: hashedPassword });
 
     res.json({ message: "Password changed successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("changePassword error:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   }
 }
 

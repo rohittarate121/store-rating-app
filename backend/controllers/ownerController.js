@@ -3,7 +3,6 @@ const { Rating, User, Store } = require("../models/index");
 // GET /api/owner/dashboard
 async function getDashboard(req, res) {
   try {
-    // Find the store that belongs to this owner
     const store = await Store.findOne({
       where: { ownerId: req.user.id },
     });
@@ -12,7 +11,6 @@ async function getDashboard(req, res) {
       return res.status(404).json({ message: "No store found for this owner" });
     }
 
-    // Get all ratings for this store including the user who submitted them
     const ratings = await Rating.findAll({
       where: { storeId: store.id },
       include: [
@@ -25,7 +23,6 @@ async function getDashboard(req, res) {
       order: [["createdAt", "DESC"]],
     });
 
-    // Calculate average rating
     const averageRating =
       ratings.length > 0
         ? parseFloat(
@@ -52,7 +49,10 @@ async function getDashboard(req, res) {
       })),
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("getDashboard error:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   }
 }
 

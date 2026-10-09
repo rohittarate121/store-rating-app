@@ -5,17 +5,16 @@ async function submitRating(req, res) {
   try {
     const { storeId, rating } = req.body;
 
-    if (!storeId || !rating) {
-      return res.status(400).json({ message: "Store and rating are required" });
+    if (!storeId) {
+      return res.status(400).json({ message: "Store is required" });
     }
 
-    if (rating < 1 || rating > 5) {
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
       return res
         .status(400)
-        .json({ message: "Rating must be between 1 and 5" });
+        .json({ message: "Rating must be a whole number between 1 and 5" });
     }
 
-    // Check if user already rated this store
     const existing = await Rating.findOne({
       where: { userId: req.user.id, storeId },
     });
@@ -36,7 +35,16 @@ async function submitRating(req, res) {
       .status(201)
       .json({ message: "Rating submitted successfully", rating: newRating });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    // Handle database unique constraint violation
+    if (error.name === "SequelizeUniqueConstraintError") {
+      return res
+        .status(400)
+        .json({ message: "You have already rated this store" });
+    }
+    console.error("submitRating error:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   }
 }
 
@@ -45,10 +53,10 @@ async function updateRating(req, res) {
   try {
     const { rating } = req.body;
 
-    if (!rating || rating < 1 || rating > 5) {
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
       return res
         .status(400)
-        .json({ message: "Rating must be between 1 and 5" });
+        .json({ message: "Rating must be a whole number between 1 and 5" });
     }
 
     const existing = await Rating.findOne({
@@ -63,7 +71,10 @@ async function updateRating(req, res) {
 
     res.json({ message: "Rating updated successfully", rating: existing });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("updateRating error:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   }
 }
 

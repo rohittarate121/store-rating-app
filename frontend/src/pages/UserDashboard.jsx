@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
@@ -13,21 +13,21 @@ export default function UserDashboard() {
   const [selectedRatings, setSelectedRatings] = useState({});
   const [message, setMessage] = useState({ text: "", type: "" });
 
-  useEffect(() => {
-    fetchStores();
-  }, [filters]);
-
-  async function fetchStores() {
+  const fetchStores = useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get("/stores", { params: filters });
       setStores(res.data);
-    } catch (err) {
+    } catch {
       console.error("Failed to fetch stores");
     } finally {
       setLoading(false);
     }
-  }
+  }, [filters]);
+
+  useEffect(() => {
+    fetchStores();
+  }, [fetchStores]);
 
   function showMessage(text, type) {
     setMessage({ text, type });
@@ -81,7 +81,6 @@ export default function UserDashboard() {
 
   return (
     <div>
-      {/* Navbar */}
       <div className="navbar">
         <h2>Store Rating App</h2>
         <div className="navbar-links">
@@ -96,7 +95,6 @@ export default function UserDashboard() {
       <div className="page-container">
         <h3 style={{ marginBottom: "1rem", color: "#2c3e50" }}>All Stores</h3>
 
-        {/* Global message */}
         {message.text && (
           <p
             className={
@@ -107,7 +105,6 @@ export default function UserDashboard() {
           </p>
         )}
 
-        {/* Search */}
         <div className="search-bar">
           <input
             placeholder="Search by store name..."
@@ -129,7 +126,6 @@ export default function UserDashboard() {
           </button>
         </div>
 
-        {/* Store Cards */}
         {loading ? (
           <p>Loading stores...</p>
         ) : stores.length === 0 ? (
@@ -158,7 +154,6 @@ export default function UserDashboard() {
                   </span>
                 </div>
 
-                {/* Rating selector */}
                 <div className="rating-selector">
                   {[1, 2, 3, 4, 5].map((num) => (
                     <button
@@ -176,7 +171,6 @@ export default function UserDashboard() {
                   ))}
                 </div>
 
-                {/* Submit or Update button */}
                 {store.myRating ? (
                   <button
                     className="btn btn-primary"

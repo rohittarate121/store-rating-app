@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
@@ -11,11 +11,7 @@ export default function OwnerDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetchDashboard();
-  }, []);
-
-  async function fetchDashboard() {
+  const fetchDashboard = useCallback(async () => {
     try {
       const res = await api.get("/owner/dashboard");
       setData(res.data);
@@ -24,7 +20,11 @@ export default function OwnerDashboard() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    fetchDashboard();
+  }, [fetchDashboard]);
 
   function handleLogout() {
     logout();
@@ -36,7 +36,6 @@ export default function OwnerDashboard() {
 
   return (
     <div>
-      {/* Navbar */}
       <div className="navbar">
         <h2>Store Rating App</h2>
         <div className="navbar-links">
@@ -56,7 +55,6 @@ export default function OwnerDashboard() {
           {data.store.address}
         </p>
 
-        {/* Store Stats */}
         <div className="owner-store-info">
           <div className="owner-stat-card">
             <h3>{data.averageRating ? data.averageRating : "N/A"}</h3>
@@ -72,7 +70,6 @@ export default function OwnerDashboard() {
           </div>
         </div>
 
-        {/* Ratings Table */}
         <div className="section-header">
           <h3>Users Who Rated Your Store</h3>
         </div>

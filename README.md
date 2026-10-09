@@ -11,36 +11,34 @@ A full stack web application where users can submit ratings for registered store
 
 ## User Roles
 
-| Role        | Description                        |
-| ----------- | ---------------------------------- |
-| Admin       | Manages users and stores           |
+| Role | Description |
+|------|-------------|
+| Admin | Manages users and stores |
 | Normal User | Browses stores and submits ratings |
-| Store Owner | Views ratings for their store      |
+| Store Owner | Views ratings for their store |
 
 ## Project Structure
+store-rating-app/
+├── backend/
+│ ├── config/ # Database connection
+│ ├── controllers/ # Route logic
+│ ├── middleware/ # Auth and role checks
+│ ├── models/ # Sequelize models
+│ ├── routes/ # Express routes
+│ ├── utils/ # Shared validation helpers
+│ ├── seed.js # Creates initial admin account
+│ └── server.js # Entry point
+└── frontend/
+└── src/
+├── api/ # Axios instance
+├── context/ # Auth context
+├── pages/ # Page components
+└── styles/ # CSS files
 
-    store-rating-app/
-    ├── backend/
-    │   ├── config/        # Database connection
-    │   ├── controllers/   # Route logic
-    │   ├── middleware/     # Auth and role checks
-    │   ├── models/         # Sequelize models
-    │   ├── routes/         # Express routes
-    │   ├── utils/          # Shared validation helpers
-    │   ├── seed.js         # Creates initial admin account
-    │   └── server.js       # Entry point
-    └── frontend/
-        └── src/
-            ├── api/        # Axios instance
-            ├── context/    # Auth context
-            ├── pages/      # Page components
-            └── styles/     # CSS files
 
 ## Prerequisites
 
-Make sure you have these installed:
-
-- Node.js v18 or higher
+- Node.js 20.19+ or 22.12+
 - PostgreSQL v14 or higher
 - npm
 
@@ -49,7 +47,7 @@ Make sure you have these installed:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/rohittarate121/store-rating-app
+git clone https://github.com/rohittarate121/store-rating-app.git
 cd store-rating-app
 ```
 
@@ -77,6 +75,7 @@ DB_PASSWORD=your_postgres_password
 DB_HOST=localhost
 DB_PORT=5432
 
+
 Seed the initial admin account:
 
 ```bash
@@ -84,16 +83,15 @@ npm run seed
 ```
 
 Start the backend:
-You should see:
-Database synced
-Server running on port 5000
-```
 
 ```bash
 npm run dev
 ```
 
 You should see:
+Database synced
+Server running on port 5000
+
 
 ### 4. Setup the frontend
 
@@ -108,9 +106,9 @@ npm run dev
 Open your browser at `http://localhost:5173`
 
 ## Default Admin Credentials
-
 Email: admin@admin.com
 Password: Admin@1234
+
 
 > Change the admin password after first login.
 
@@ -118,50 +116,50 @@ Password: Admin@1234
 
 ### Auth
 
-| Method | Endpoint                  | Access        | Description        |
-| ------ | ------------------------- | ------------- | ------------------ |
-| POST   | /api/auth/register        | Public        | Normal user signup |
-| POST   | /api/auth/login           | Public        | All roles login    |
-| PATCH  | /api/auth/change-password | All logged in | Change password    |
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| POST | /api/auth/register | Public | Normal user signup |
+| POST | /api/auth/login | Public | All roles login |
+| PATCH | /api/auth/change-password | All logged in | Change password |
 
 ### Admin
 
-| Method | Endpoint             | Access | Description          |
-| ------ | -------------------- | ------ | -------------------- |
-| GET    | /api/admin/stats     | Admin  | Dashboard statistics |
-| GET    | /api/admin/users     | Admin  | List all users       |
-| POST   | /api/admin/users     | Admin  | Create a user        |
-| GET    | /api/admin/users/:id | Admin  | User detail          |
-| GET    | /api/admin/stores    | Admin  | List all stores      |
-| POST   | /api/admin/stores    | Admin  | Create a store       |
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | /api/admin/stats | Admin | Dashboard statistics |
+| GET | /api/admin/users | Admin | List all users |
+| POST | /api/admin/users | Admin | Create a user |
+| GET | /api/admin/users/:id | Admin | User detail |
+| GET | /api/admin/stores | Admin | List all stores |
+| POST | /api/admin/stores | Admin | Create a store |
 
 ### Stores
 
-| Method | Endpoint    | Access      | Description                 |
-| ------ | ----------- | ----------- | --------------------------- |
-| GET    | /api/stores | Normal User | List all stores with search |
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | /api/stores | Normal User | List all stores with search |
 
 ### Ratings
 
-| Method | Endpoint         | Access      | Description     |
-| ------ | ---------------- | ----------- | --------------- |
-| POST   | /api/ratings     | Normal User | Submit a rating |
-| PATCH  | /api/ratings/:id | Normal User | Update a rating |
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| POST | /api/ratings | Normal User | Submit a rating |
+| PATCH | /api/ratings/:id | Normal User | Update a rating |
 
 ### Owner
 
-| Method | Endpoint             | Access      | Description        |
-| ------ | -------------------- | ----------- | ------------------ |
-| GET    | /api/owner/dashboard | Store Owner | View store ratings |
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | /api/owner/dashboard | Store Owner | View store ratings |
 
 ## Form Validation
 
-| Field    | Rules                                                 |
-| -------- | ----------------------------------------------------- |
-| Name     | Min 20 characters, Max 60 characters                  |
-| Email    | Standard email format                                 |
+| Field | Rules |
+|-------|-------|
+| Name | Min 20 characters, Max 60 characters |
+| Email | Standard email format |
 | Password | 8-16 characters, one uppercase, one special character |
-| Address  | Max 400 characters                                    |
+| Address | Max 400 characters |
 
 ## Features
 
@@ -170,8 +168,9 @@ Password: Admin@1234
 - Admin dashboard with statistics
 - User and store management with filtering and sorting
 - Store search by name and address
-- Submit and update store ratings
+- Submit and update store ratings (integers 1-5 only)
 - Store owner dashboard with rater list and average rating
 - Change password for all roles
 - JWT authentication
 - bcrypt password hashing
+

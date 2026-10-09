@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { Store, Rating, User } = require("../models/index");
+const { Store, Rating } = require("../models/index");
 
 // GET /api/stores
 async function getStores(req, res) {
@@ -48,7 +48,10 @@ async function getStores(req, res) {
 
     res.json(result);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("getStores error:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again." });
   }
 }
 
