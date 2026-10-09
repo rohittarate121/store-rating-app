@@ -19,8 +19,6 @@ A full stack web application where users can submit ratings for registered store
 
 ## Project Structure
 
-## Project Structure
-
     store-rating-app/
     ├── backend/
     │   ├── config/        # Database connection
@@ -72,7 +70,6 @@ npm install
 ```
 
 Create a `.env` file inside the `backend` folder:
-
 PORT=5000
 JWT_SECRET=your_secret_key_here
 DB_NAME=store_rating_db
@@ -88,6 +85,11 @@ npm run seed
 ```
 
 Start the backend:
+You should see:
+```
+Database synced
+Server running on port 5000
+```
 
 ```bash
 npm run dev
