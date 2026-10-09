@@ -11,7 +11,6 @@ const {
   createStore,
 } = require("../controllers/adminController");
 
-// All admin routes require a valid token and admin role
 router.use(auth, authorize("admin"));
 
 router.get("/stats", getStats);

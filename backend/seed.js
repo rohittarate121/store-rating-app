@@ -1,4 +1,3 @@
-// Run this once to create the initial admin account: npm run seed
 const bcrypt = require("bcrypt");
 const { sequelize, User } = require("./models/index");
 require("dotenv").config();
