@@ -36,7 +36,6 @@ A full stack web application where users can submit ratings for registered store
             ├── pages/      # Page components
             └── styles/     # CSS files
 
-
 ## Prerequisites
 
 Make sure you have these installed:
@@ -50,7 +49,7 @@ Make sure you have these installed:
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/rohittarate121/store-rating-app
 cd store-rating-app
 ```
 
@@ -86,7 +85,6 @@ npm run seed
 
 Start the backend:
 You should see:
-```
 Database synced
 Server running on port 5000
 ```
