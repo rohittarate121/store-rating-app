@@ -10,6 +10,7 @@ export default function OwnerDashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [sort, setSort] = useState({ field: "user.name", order: "ASC" });
 
   const fetchDashboard = useCallback(async () => {
     try {
@@ -31,8 +32,46 @@ export default function OwnerDashboard() {
     window.location.href = "/login";
   }
 
+  function handleSort(field) {
+    setSort((prev) => ({
+      field,
+      order: prev.field === field && prev.order === "ASC" ? "DESC" : "ASC",
+    }));
+  }
+
+  function sortArrow(field) {
+    if (sort.field !== field) return "";
+    return sort.order === "ASC" ? " ▲" : " ▼";
+  }
+
+  function getSortedRatings(ratings) {
+    return [...ratings].sort((a, b) => {
+      let valA, valB;
+
+      if (sort.field === "user.name") {
+        valA = a.user.name.toLowerCase();
+        valB = b.user.name.toLowerCase();
+      } else if (sort.field === "user.email") {
+        valA = a.user.email.toLowerCase();
+        valB = b.user.email.toLowerCase();
+      } else if (sort.field === "rating") {
+        valA = a.rating;
+        valB = b.rating;
+      } else if (sort.field === "submittedAt") {
+        valA = new Date(a.submittedAt);
+        valB = new Date(b.submittedAt);
+      }
+
+      if (valA < valB) return sort.order === "ASC" ? -1 : 1;
+      if (valA > valB) return sort.order === "ASC" ? 1 : -1;
+      return 0;
+    });
+  }
+
   if (loading) return <p style={{ padding: "2rem" }}>Loading...</p>;
   if (error) return <p style={{ padding: "2rem", color: "red" }}>{error}</p>;
+
+  const sortedRatings = getSortedRatings(data.ratings);
 
   return (
     <div>
@@ -82,14 +121,34 @@ export default function OwnerDashboard() {
           <table>
             <thead>
               <tr>
-                <th>User Name</th>
-                <th>Email</th>
-                <th>Rating</th>
-                <th>Submitted On</th>
+                <th
+                  onClick={() => handleSort("user.name")}
+                  style={{ cursor: "pointer" }}
+                >
+                  User Name {sortArrow("user.name")}
+                </th>
+                <th
+                  onClick={() => handleSort("user.email")}
+                  style={{ cursor: "pointer" }}
+                >
+                  Email {sortArrow("user.email")}
+                </th>
+                <th
+                  onClick={() => handleSort("rating")}
+                  style={{ cursor: "pointer" }}
+                >
+                  Rating {sortArrow("rating")}
+                </th>
+                <th
+                  onClick={() => handleSort("submittedAt")}
+                  style={{ cursor: "pointer" }}
+                >
+                  Submitted On {sortArrow("submittedAt")}
+                </th>
               </tr>
             </thead>
             <tbody>
-              {data.ratings.map((r) => (
+              {sortedRatings.map((r) => (
                 <tr key={r.id}>
                   <td>{r.user.name}</td>
                   <td>{r.user.email}</td>
